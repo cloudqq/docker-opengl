@@ -1,7 +1,7 @@
 # !/usr/bin/make - f
 
 SHELL                   := /usr/bin/env bash
-DOCKER_NAMESPACE        ?= utensils
+DOCKER_NAMESPACE        ?= cloudqq
 IMAGE_NAME              ?= opengl
 VERSION                 := $(shell git describe --tags --abbrev=0 2>/dev/null || git rev-parse --abbrev-ref HEAD)
 VCS_REF                 := $(shell git rev-parse --short HEAD)
@@ -10,6 +10,7 @@ ARCH                    := $(shell uname -m)
 RELEASES                := 18.2.8 18.3.6 19.0.8
 LATEST_TAG              := 19.0.8
 STABLE_TAG              := 19.0.8
+PROXY                   := http://172.31.0.29:1088
 
 # Default target is to build all defined Mesa releases.
 .PHONY: default
@@ -31,6 +32,8 @@ $(RELEASES):
 		--build-arg BUILD_DATE=$(BUILD_DATE) \
 		--build-arg VCS_REF=$(VCS_REF) \
 		--build-arg MESA_VERSION=$(@) \
+                --build-arg http_proxy=$(PROXY) \
+                --build-arg https_proxy=$(PROXY) \
 		--tag $(DOCKER_NAMESPACE)/$(IMAGE_NAME):$(@) \
 		--tag $(DOCKER_NAMESPACE)/$(IMAGE_NAME):$(@)-$(VCS_REF) \
 		--tag $(DOCKER_NAMESPACE)/$(IMAGE_NAME):$(@)-$(VERSION) \
